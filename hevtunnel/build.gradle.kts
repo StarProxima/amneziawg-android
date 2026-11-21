@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "com.blancvpn"
-version = "1.0.3-log-history.1"
+version = "1.0.3-log-history.2"
 
 android {
     namespace = "org.amnezia.awg.hevtunnel"
@@ -32,7 +32,9 @@ android {
         externalNativeBuild {
             ndkBuild {
                 arguments.add("APP_CFLAGS+=-DPKGNAME=org/amnezia/awg/hevtunnel -ffile-prefix-map=${rootDir}=.")
-                arguments.add("APP_LDFLAGS+=-Wl,--build-id=none")
+                // Sentry and Google Play match crash frames to uploaded symbols by GNU build ID.
+                // sha1 is derived from the linked bytes, so the build stays reproducible.
+                arguments.add("APP_LDFLAGS+=-Wl,--build-id=sha1")
             }
         }
     }
@@ -46,6 +48,14 @@ android {
     externalNativeBuild {
         ndkBuild {
             path = file("src/main/jni/Android.mk")
+        }
+    }
+
+    packaging {
+        jniLibs {
+            // Ship unstripped .so: the app strips them when packaging the APK and keeps
+            // the debug info for its native debug symbols and Sentry upload.
+            keepDebugSymbols += "**/libhev-socks5-tunnel.so"
         }
     }
 
