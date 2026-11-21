@@ -12,5 +12,14 @@ object TProxyService {
     external fun TProxyStopService()
 
     @JvmStatic
+    external fun TProxyIsRunning(): Boolean
+
+    @JvmStatic
     external fun TProxyGetStats(): LongArray?
+
+    @JvmStatic
+    external fun ConfigureLogHistory(json: String?)
+
+    @JvmStatic
+    external fun GetLogHistoryState(): String
 }

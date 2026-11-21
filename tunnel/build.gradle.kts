@@ -70,23 +70,21 @@ android {
     }
 }
 
-tasks.register<Exec>("forceGoRebuild") {
-    doFirst {
-        file("tools/libwg-go/vpn/vpn.go").setLastModified(System.currentTimeMillis())
-    }
-    workingDir = file("tools/libwg-go")
-    commandLine = listOf("rm", "-f", "build/go-1.25.1/.prepared")
+tasks.register<org.gradle.api.tasks.Delete>("forceGoRebuild") {
+    delete(fileTree(layout.buildDirectory) {
+        include("intermediates/cxx/**/generated-src/go-1.24.4/.prepared")
+    })
 }
 
 afterEvaluate {
-    tasks.named("assembleRelease").configure {
+    tasks.matching { it.name.startsWith("buildCMake") }.configureEach {
         dependsOn("forceGoRebuild")
     }
 }
 
 dependencies {
 
-    implementation(libs.hev.tunnel)
+    implementation(project(":hevtunnel"))
 
     implementation(libs.androidx.annotation)
     runtimeOnly(libs.androidx.collection)
@@ -103,9 +101,9 @@ dependencies {
 publishing {
     publications {
         register<MavenPublication>("release") {
-            groupId = "com.zaneschepke"
+            groupId = "com.blancvpn"
             artifactId = "amneziawg-android"
-            version = providers.gradleProperty("amneziawgVersionName").get()
+            version = "2.3.7-log-history.5"
             afterEvaluate {
                 from(components["release"])
             }
