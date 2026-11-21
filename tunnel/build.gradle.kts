@@ -103,7 +103,7 @@ publishing {
         register<MavenPublication>("release") {
             groupId = "com.blancvpn"
             artifactId = "amneziawg-android"
-            version = "2.3.7-log-history.5"
+            version = "2.3.7-log-history.6"
             afterEvaluate {
                 from(components["release"])
             }

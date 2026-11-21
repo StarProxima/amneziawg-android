@@ -21,4 +21,6 @@ public class GoBackend {
     public static native int configureLogHistory(String json);
 
     public static native String getLogHistoryState();
+
+    public static native int setCrashOutput(String path);
 }

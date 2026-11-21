@@ -11,6 +11,7 @@ import (
 	"runtime/debug"
 	"strings"
 
+	"github.com/amnezia-vpn/amneziawg-android/crashoutput"
 	"github.com/amnezia-vpn/amneziawg-android/shared"
 	"github.com/amnezia-vpn/amneziawg-android/util"
 	"github.com/amnezia-vpn/amneziawg-go/conn"
@@ -246,4 +247,13 @@ func awgConfigureLogHistory(json string) int32 {
 //export awgGetLogHistoryState
 func awgGetLogHistoryState() *C.char {
 	return C.CString(shared.GetLogHistoryState())
+}
+
+//export awgSetCrashOutput
+func awgSetCrashOutput(path string) int32 {
+	if err := crashoutput.Set(path); err != nil {
+		shared.LogError(tag, "SetCrashOutput: %v", err)
+		return -1
+	}
+	return 0
 }
