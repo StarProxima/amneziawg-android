@@ -17,6 +17,7 @@ extern char *awgVersion();
 extern int awgUpdateTunnelPeers(int handle, struct go_string settings);
 extern int awgConfigureLogHistory(struct go_string json);
 extern char *awgGetLogHistoryState();
+extern int awgSetCrashOutput(struct go_string path);
 
 JNIEXPORT jint JNICALL Java_org_amnezia_awg_GoBackend_awgTurnOn(JNIEnv *env, jclass c, jstring ifname, jint tun_fd, jstring settings, jstring uapipath)
 {
@@ -117,5 +118,14 @@ JNIEXPORT jstring JNICALL Java_org_amnezia_awg_GoBackend_getLogHistoryState(JNIE
 		return (*env)->NewStringUTF(env, "{\"v\":1,\"status\":\"failed\"}");
 	ret = (*env)->NewStringUTF(env, state);
 	free(state);
+	return ret;
+}
+
+JNIEXPORT jint JNICALL Java_org_amnezia_awg_GoBackend_setCrashOutput(JNIEnv *env, jclass c, jstring path)
+{
+	const char *path_str = (*env)->GetStringUTFChars(env, path, 0);
+	size_t path_len = (*env)->GetStringUTFLength(env, path);
+	int ret = awgSetCrashOutput((struct go_string){ .str = path_str, .n = path_len });
+	(*env)->ReleaseStringUTFChars(env, path, path_str);
 	return ret;
 }
